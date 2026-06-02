@@ -56,6 +56,7 @@ class acme_sh {
 	private $accountconfig;
 	private $path_account;
 	private $name;
+	private $email;
 	private $debug = true;
 	public $dnssleep;
 	public $preferredchain;
@@ -114,6 +115,7 @@ class acme_sh {
 
 	function __construct($name, $ca, $email) {
 		$this->name = $name;
+		$this->email = $email;
 		$this->init($ca, $name, $email);
 	}
 
@@ -177,10 +179,15 @@ class acme_sh {
 		return $privateKey;
 	}
 
-	function signCertificate($action, $accountkey, $certificatepsk, $domainstosign, $envvariables = null) {
+	function signCertificate($action, $accountkey, $certificatepsk, $domainstosign, $envvariables = null, $eabkid = '', $eabhmac = '') {
 		// $action = issue / renew
 		global $acme_domain_validation_method;
 		file_put_contents("{$this->path_account}/account.key", base64_decode($accountkey));
+
+		if (!empty($eabkid) && !empty($eabhmac)) {
+			$caconf = "CA_EAB_KEY_ID='{$eabkid}'\nCA_EAB_HMAC_KEY='{$eabhmac}'\nCA_EMAIL='{$this->email}'\n";
+			file_put_contents("{$this->path_account}/ca.conf", $caconf);
+		}
 
 		$cmdparameters = "";
 		if (is_numericint($this->dnssleep)) {

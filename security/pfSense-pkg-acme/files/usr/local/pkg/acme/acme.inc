@@ -3623,6 +3623,8 @@ function get_certificate($name) {
 			$account = get_accountkey($certificate['acmeaccount']);
 			$acmeserver = $account['acmeserver'];
 			$accountkey = $account['accountkey'];
+			$eabkid = $account['eabkid'];
+			$eabhmac = $account['eabhmac'];
 			$email = $account['email'];
 			echo "server: $acmeserver \n";
 
@@ -3640,7 +3642,7 @@ function get_certificate($name) {
 			$acmesh->preferredchain = $certificate['preferredchain'];
 			$acmesh->addressfamily = $certificate['addressfamily'];
 			$acmesh->certprofile = $certificate['certprofile'];
-			$result = $acmesh->signCertificate($action, $accountkey, $certificatepsk, $domainstosign, $envvariables);
+			$result = $acmesh->signCertificate($action, $accountkey, $certificatepsk, $domainstosign, $envvariables, $eabkid, $eabhmac);
 		}
 		return $result;
 	}
